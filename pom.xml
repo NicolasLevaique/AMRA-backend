@@ -2,12 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.ubleam.framework</groupId>
-  <artifactId>programTestLogger</artifactId>
+  <groupId>com.amra.backend</groupId>
+  <artifactId>AMRA-backend</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>programTestLogger</name>
+  <name>AMRA-backend</name>
   <url>http://maven.apache.org</url>
 
 <parent>
@@ -18,14 +18,13 @@
   
   <dependencies>
   <dependency>
-         <groupId>com.ubleam.framework</groupId>
-         <artifactId>logger</artifactId>
-         <version>0.0.1-SNAPSHOT</version>
-      </dependency>
+	<groupId>org.json</groupId>
+	<artifactId>json</artifactId>
+	<version>20140107</version>
+</dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
      <!-- tag::jetty[] -->
@@ -53,14 +52,13 @@
     </dependencies>
 
     <properties>
-        <start-class>com.ubleam.framework.programTestLogger.Application</start-class>
+        <start-class>com.amra.backend.amra-backend.Application</start-class>
     </properties>
 
     <build>
         <plugins>
             <plugin> 
                 <artifactId>maven-compiler-plugin</artifactId> 
-                <version>2.3.2</version> 
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
