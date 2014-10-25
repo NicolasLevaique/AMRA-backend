@@ -5,7 +5,8 @@
 	<groupId>com.amra.backend</groupId>
 	<artifactId>AMRA</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
+<!-- 	<packaging>war</packaging> -->
 
 	<name>AMRA</name>
 	<url>http://maven.apache.org</url>
@@ -45,7 +46,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jetty</artifactId>
-			<scope>provided</scope>
+<!-- 			<scope>provided</scope> -->
 		</dependency>
 		<!-- end::jetty[] -->
 		<!-- tag::actuator[] -->
