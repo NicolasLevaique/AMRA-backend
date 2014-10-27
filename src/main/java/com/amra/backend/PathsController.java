@@ -1,15 +1,19 @@
 package com.amra.backend;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mongodb.BasicDBObject;
@@ -55,11 +59,7 @@ public class PathsController {
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public String getPathById(@PathVariable("id") UUID pathId) {
 		LOGGER.info("Get request on path [" + pathId + "]");
-		JSONObject pathJSON = new JSONObject();
-		pathJSON.put("id", pathId);
-		pathJSON.put("title", "path1");
-		pathJSON.put("description", "test path");		
-		 
+		
 		BasicDBObject searchQuery = new BasicDBObject();
 		searchQuery.put("id", pathId.toString());
 	 
@@ -72,6 +72,40 @@ public class PathsController {
 		}
 		
 		return pathResult;
+	}
+	
+	/**
+	 * Get a path from the DB, based on its id
+	 * @param pathId
+	 * @return
+	 */
+	@RequestMapping(method=RequestMethod.GET)
+	public String getPathsByLocation(@RequestParam("lat") float latitude, @RequestParam("long") float longitude, 
+			@RequestParam(value = "dist") float distance) {
+		LOGGER.info("Get request on path from location : [latitude:" + latitude + ", longitude:" + longitude + "]");	
+		 
+		// variation of .001 in lat or long is a 100m variation on earth's surface
+		float dist = distance * 0.00001f;
+		BasicDBObject searchQuery = new BasicDBObject();
+		List<BasicDBObject> searchArguments = new ArrayList<BasicDBObject>();
+		searchArguments.add(new BasicDBObject("checkpoints.0.latitude", new BasicDBObject("$lte", latitude + dist)
+			.append("$gte", latitude - dist)));
+		searchArguments.add(new BasicDBObject("checkpoints.0.longitude", new BasicDBObject("$lte", longitude + dist)
+		.append("$gte", longitude - dist)));
+		searchQuery.put("$and", searchArguments);
+	 
+		DBCursor cursor = PATHS_COLLECTION.find(searchQuery);
+//		 
+		JSONObject result = new JSONObject() ;
+		JSONArray pathsArray = new JSONArray();
+		while (cursor.hasNext()) {
+			JSONObject path = new JSONObject(cursor.next().toString());
+			 pathsArray.put(path);
+			LOGGER.info("Found path: " + path.toString() + " in DB");
+		}
+		
+		result.put("paths", pathsArray);
+		return result.toString();
 	}
 	
 	/**
