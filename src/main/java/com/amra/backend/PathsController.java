@@ -1,14 +1,9 @@
 package com.amra.backend;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -56,26 +51,6 @@ public class PathsController {
 		}		
 	}
 
-	/**
-	 * the index.html file from angular
-	 * @param pathId
-	 * @return
-	 */
-	@RequestMapping(value="/index.html", method=RequestMethod.GET)
-	public void getIndex(HttpServletResponse response) {
-		LOGGER.info("Get request index");
-		    try {
-		      // get your file as InputStream
-		    	FileInputStream fis = new FileInputStream("D:\\AMRA\\AMRA-webapp\\www\\index.html");
-		      InputStream is = fis;
-		      // copy it to response's OutputStream
-		      org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-		      response.flushBuffer();
-		    } catch (IOException ex) {
-		      throw new RuntimeException("IOError writing file to output stream");
-		    }
-	}
-	
 	/**
 	 * Get a path from the DB, based on its id
 	 * @param pathId
