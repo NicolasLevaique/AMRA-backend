@@ -6,11 +6,13 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.cloudfoundry.runtime.env.CloudEnvironment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +28,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 
 //TODO: move the DB relation into a service ! If we want to do proper MVC...
 @RestController
@@ -47,33 +50,20 @@ public class PathsController {
 	public PathsController() {
 		MongoClient mongo;
 		try {
-			 mongo = new MongoClient( "localhost" , 27017 );
+			
+	        String connURL = getServiceURI();
+	        mongo = new MongoClient(new MongoClientURI(connURL));
+
+			// mongo = new MongoClient( "localhost" , 27017 );
 			 DB db = mongo.getDB(DB_NAME);
 			 PATHS_COLLECTION = db.getCollection(COLLECTION_NAME);
 			 
 		} catch (UnknownHostException e) {
 			LOGGER.error("Connection to MongoDB failed");
+		} catch (Exception e) {
+			LOGGER.error("Failed: " + e.getMessage());
+	        e.printStackTrace();
 		}		
-	}
-
-	/**
-	 * the index.html file from angular
-	 * @param pathId
-	 * @return
-	 */
-	@RequestMapping(value="/index.html", method=RequestMethod.GET)
-	public void getIndex(HttpServletResponse response) {
-		LOGGER.info("Get request index");
-		    try {
-		      // get your file as InputStream
-		    	FileInputStream fis = new FileInputStream("D:\\AMRA\\AMRA-webapp\\www\\index.html");
-		      InputStream is = fis;
-		      // copy it to response's OutputStream
-		      org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-		      response.flushBuffer();
-		    } catch (IOException ex) {
-		      throw new RuntimeException("IOError writing file to output stream");
-		    }
 	}
 	
 	/**
@@ -153,4 +143,19 @@ public class PathsController {
 		}		
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public String getServiceURI() throws Exception {
+	    CloudEnvironment environment = new CloudEnvironment();
+	    if ( environment.getServiceDataByLabels("mongodb-2.4").size() == 0 ) {
+	        throw new Exception( "No MongoDB service is bund to this app!!" );
+	    } 
+
+	    Map credential = (Map)((Map)environment.getServiceDataByLabels("mongodb-2.4").get(0)).get( "credentials" );
+	 
+	    return (String)credential.get( "url" );
+	  }
 }
