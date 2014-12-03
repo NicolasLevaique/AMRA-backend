@@ -40,7 +40,7 @@ public class PathsController {
 	/**
 	 * MongoDB informations 
 	 */
-	private static String DB_NAME = "AMRA-DB";
+	private static String DB_NAME = "db";
 	private static String COLLECTION_NAME = "paths";
 	
 	/**
