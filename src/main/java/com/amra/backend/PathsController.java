@@ -50,11 +50,18 @@ public class PathsController {
 	public PathsController() {
 		MongoClient mongo;
 		try {
-			
-	        String connURL = getServiceURI();
-	        mongo = new MongoClient(new MongoClientURI(connURL));
+			String vcap = System.getenv("VCAP_SERVICES");
+			if (vcap!=null){
+				JSONObject vcapServices = new JSONObject(vcap);
+				if (vcapServices.has("mongodb-2.4")) {
+					JSONObject credentials = vcapServices.getJSONArray("mongodb-2.4").getJSONObject(0).getJSONObject("credentials");
+					String connURL = credentials.getString("url");
+			        mongo = new MongoClient(new MongoClientURI(connURL));
 
-			// mongo = new MongoClient( "localhost" , 27017 );
+				}
+			} else {
+			   mongo = new MongoClient( "localhost" , 27017 );
+			}
 			 DB db = mongo.getDB(DB_NAME);
 			 PATHS_COLLECTION = db.getCollection(COLLECTION_NAME);
 			 
