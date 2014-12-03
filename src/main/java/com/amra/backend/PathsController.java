@@ -47,8 +47,9 @@ public class PathsController {
 	 * Constructor. Connect to the DB
 	 */
 	public PathsController() {
-		MongoClient mongo;
 		try {
+			MongoClient mongo = new MongoClient();
+
 			String vcap = System.getenv("VCAP_SERVICES");
 			if (vcap!=null){
 				JSONObject vcapServices = new JSONObject(vcap);
