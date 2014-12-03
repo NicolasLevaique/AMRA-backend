@@ -12,7 +12,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.cloudfoundry.runtime.env.CloudEnvironment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -150,19 +149,5 @@ public class PathsController {
 		}		
 	}
 
-	/**
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	public String getServiceURI() throws Exception {
-	    CloudEnvironment environment = new CloudEnvironment();
-	    if ( environment.getServiceDataByLabels("mongodb-2.4").size() == 0 ) {
-	        throw new Exception( "No MongoDB service is bund to this app!!" );
-	    } 
-
-	    Map credential = (Map)((Map)environment.getServiceDataByLabels("mongodb-2.4").get(0)).get( "credentials" );
-	 
-	    return (String)credential.get( "url" );
-	  }
+	
 }
